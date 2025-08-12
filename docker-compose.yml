@@ -1,17 +1,17 @@
-version: "3.8"
-
 services:
   service-catalog-api:
-    build: .
+    build:
+      context: .
     container_name: service-catalog-api
     ports:
       - "8200:8200"
     environment:
-      # Optional: override if you want a different DB
-      # For SQLite (default in app/db.py):
-      DATABASE_URL: "sqlite:////app/app/service_catalog.db"
-      # For Postgres (example):
-      # DATABASE_URL: "postgresql+psycopg2://user:password@postgres:5432/service_catalog"
+      # absolute inside-container path; will be mounted to your host folder
+      DATABASE_URL: "sqlite:////data/service_catalog.db"
     volumes:
-      - ./app:/app/app
-    restart: unless-stopped
+      # bind mount to your local sc_data folder (make sure it exists!)
+      - ./sc_data:/data
+    # ensure the directory exists before the app imports and connects
+    command: >
+      sh -c "mkdir -p /data &&
+             python -m uvicorn app.main:app --host 0.0.0.0 --port 8200 --reload"

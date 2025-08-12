@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  service-catalog-api:
+    build: .
+    container_name: service-catalog-api
+    ports:
+      - "8200:8200"
+    environment:
+      # Optional: override if you want a different DB
+      # For SQLite (default in app/db.py):
+      DATABASE_URL: "sqlite:////app/app/service_catalog.db"
+      # For Postgres (example):
+      # DATABASE_URL: "postgresql+psycopg2://user:password@postgres:5432/service_catalog"
+    volumes:
+      - ./app:/app/app
+    restart: unless-stopped
